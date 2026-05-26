@@ -797,7 +797,7 @@
             user-select: none;
         }
         .platform-check:hover { border-color: #3a3a3e; background: #27272b; }
-        .platform-check input[type="checkbox"] { display: none; }
+        .platform-check input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
         .platform-check.checked {
             background: rgba(255,255,255,.08);
             border-color: rgba(255,255,255,.2);
@@ -1046,11 +1046,11 @@
             <div class="form-group">
                 <label class="form-label">Platform</label>
                 <div class="platform-checkboxes" id="newPlatformGroup">
-                    <label class="platform-check"><input type="checkbox" value="instagram"><span class="platform-check-dot" style="background:var(--instagram)"></span>Instagram</label>
-                    <label class="platform-check"><input type="checkbox" value="x"><span class="platform-check-dot" style="background:var(--x)"></span>Twitter/X</label>
-                    <label class="platform-check"><input type="checkbox" value="bluesky"><span class="platform-check-dot" style="background:var(--bluesky)"></span>Bluesky</label>
-                    <label class="platform-check"><input type="checkbox" value="linkedin"><span class="platform-check-dot" style="background:var(--linkedin)"></span>LinkedIn</label>
-                    <label class="platform-check"><input type="checkbox" value="youtube"><span class="platform-check-dot" style="background:var(--youtube)"></span>YouTube</label>
+                    <div class="platform-check"><input type="checkbox" value="instagram"><span class="platform-check-dot" style="background:var(--instagram)"></span>Instagram</div>
+                    <div class="platform-check"><input type="checkbox" value="x"><span class="platform-check-dot" style="background:var(--x)"></span>Twitter/X</div>
+                    <div class="platform-check"><input type="checkbox" value="bluesky"><span class="platform-check-dot" style="background:var(--bluesky)"></span>Bluesky</div>
+                    <div class="platform-check"><input type="checkbox" value="linkedin"><span class="platform-check-dot" style="background:var(--linkedin)"></span>LinkedIn</div>
+                    <div class="platform-check"><input type="checkbox" value="youtube"><span class="platform-check-dot" style="background:var(--youtube)"></span>YouTube</div>
                 </div>
             </div>
             <div class="form-group">
@@ -1423,9 +1423,13 @@ function renderUploadPreview() {
 }
 
 // Platform checkbox toggle styling
-document.querySelectorAll('#newPlatformGroup .platform-check input').forEach(function(cb) {
-    cb.addEventListener('change', function() {
-        cb.closest('.platform-check').classList.toggle('checked', cb.checked);
+document.querySelectorAll('#newPlatformGroup .platform-check').forEach(function(label) {
+    label.addEventListener('click', function(e) {
+        var cb = label.querySelector('input[type="checkbox"]');
+        if (e.target !== cb) {
+            cb.checked = !cb.checked;
+        }
+        label.classList.toggle('checked', cb.checked);
     });
 });
 
