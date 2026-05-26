@@ -1323,26 +1323,21 @@ function openModal(post) {
 
     document.getElementById('modalBody').innerHTML = body;
 
-    // Show delete button only for published posts
+    // Show delete button for all posts
     var footerEl = document.getElementById('modalFooter');
-    if (post.status === 'published') {
-        var postIdx = POSTS.indexOf(post);
-        footerEl.innerHTML = '<button class="btn-delete" id="modalDeleteBtn" data-idx="' + postIdx + '">' +
-            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>' +
-            'Delete Post</button>';
-        footerEl.style.display = '';
-        document.getElementById('modalDeleteBtn').addEventListener('click', function() {
-            var idx = parseInt(this.dataset.idx);
-            if (idx >= 0 && idx < POSTS.length) {
-                POSTS.splice(idx, 1);
-                closeModal('modalOverlay');
-                render();
-            }
-        });
-    } else {
-        footerEl.innerHTML = '';
-        footerEl.style.display = 'none';
-    }
+    var postIdx = POSTS.indexOf(post);
+    footerEl.innerHTML = '<button class="btn-delete" id="modalDeleteBtn" data-idx="' + postIdx + '">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>' +
+        'Delete Post</button>';
+    footerEl.style.display = '';
+    document.getElementById('modalDeleteBtn').addEventListener('click', function() {
+        var idx = parseInt(this.dataset.idx);
+        if (idx >= 0 && idx < POSTS.length) {
+            POSTS.splice(idx, 1);
+            closeModal('modalOverlay');
+            render();
+        }
+    });
 
     document.getElementById('modalOverlay').classList.add('open');
     window._carouselIdx = 0;
