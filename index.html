@@ -1030,6 +1030,10 @@
                 <li><a href="https://docs.google.com/document/d/1q3txiXeTSBXwM1DgxYSerJWAKwH1vqd38Py9rCr9sPg/edit">&#8594; Website Copy Draft (codeforthepeople.com)</a></li>
                 <li><a href="https://docs.google.com/spreadsheets/d/1lRlRpaOQhoU3p-dyXjTD7V65NzcUJz86/edit?gid=37098522#gid=37098522">&#8594; Messaging Architecture</a></li>
             </ul>
+            <p style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border);">
+                <button onclick="resetToDefaults()" style="background: none; border: 1px solid var(--border); color: var(--text-secondary); padding: 6px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.8rem; font-family: inherit;">Reset all posts to defaults</button>
+                <span style="display: block; margin-top: 6px; font-size: 0.75rem; color: var(--text-light);">Your edits are saved automatically in your browser. Use this to restore the original calendar data.</span>
+            </p>
         </div>
     </div>
 </div>
@@ -1140,7 +1144,7 @@
 </div>
 
 <script>
-const POSTS = [
+const DEFAULT_POSTS = [
     // ============================================================
     // PRE-LAUNCH: Account Setup & Teaser (May 28–31)
     // ============================================================
@@ -2005,6 +2009,29 @@ const POSTS = [
     }
 ];
 
+// --- LocalStorage persistence ---
+function loadPosts() {
+    try {
+        var saved = localStorage.getItem('cftp_posts');
+        if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return null;
+}
+function savePosts() {
+    try {
+        localStorage.setItem('cftp_posts', JSON.stringify(POSTS));
+    } catch (e) {}
+}
+function resetToDefaults() {
+    if (confirm('Reset all posts to the original defaults? Your edits will be lost.')) {
+        POSTS.length = 0;
+        DEFAULT_POSTS.forEach(function(p) { POSTS.push(JSON.parse(JSON.stringify(p))); });
+        savePosts();
+        render();
+    }
+}
+var POSTS = loadPosts() || JSON.parse(JSON.stringify(DEFAULT_POSTS));
+
 const PLATFORM_LABELS = {
     instagram: "Instagram", x: "Twitter/X", bluesky: "Bluesky", linkedin: "LinkedIn", youtube: "YouTube", tiktok: "TikTok", facebook: "Facebook", threads: "Threads"
 };
@@ -2255,6 +2282,7 @@ function openModal(post) {
         var idx = parseInt(this.dataset.idx);
         if (idx >= 0 && idx < POSTS.length) {
             POSTS.splice(idx, 1);
+            savePosts();
             closeModal('modalOverlay');
             render();
         }
@@ -2457,6 +2485,7 @@ document.getElementById('createSaveBtn').addEventListener('click', function() {
         POSTS.push(postData);
     }
 
+    savePosts();
     closeCreateModal();
     render();
 });
