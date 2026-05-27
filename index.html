@@ -2242,13 +2242,24 @@ document.addEventListener('DOMContentLoaded', function() {
     if (saveBtn) saveBtn.addEventListener('click', function() {
         var raw = document.getElementById('firebaseConfigInput').value.trim();
         try {
-            // Parse the config — handle JS object notation (not just JSON)
-            var cleaned = raw
-                .replace(/^const\s+firebaseConfig\s*=\s*/, '')
-                .replace(/;$/, '')
+            // Parse the config — extract the { ... } object from any surrounding code
+            // Remove comments, import/export lines, and other JS boilerplate
+            var stripped = raw
+                .replace(/\/\/.*$/gm, '')           // remove single-line comments
+                .replace(/\/\*[\s\S]*?\*\//g, '')   // remove multi-line comments
+                .replace(/^import\s+.*$/gm, '')     // remove import lines
+                .replace(/^export\s+.*$/gm, '')     // remove export lines
+                .replace(/const\s+\w+\s*=\s*initializeApp\(.*\);?/g, '')  // remove initializeApp
+                .replace(/const\s+firebaseConfig\s*=\s*/, '')  // remove variable declaration
+                .replace(/const\s+app\s*=.*$/gm, '')
+                .trim().replace(/;$/, '');
+            // Find the JSON object
+            var objMatch = stripped.match(/\{[\s\S]*\}/);
+            if (!objMatch) throw new Error('No config object found. Paste the code from Firebase.');
+            var jsonStr = objMatch[0]
                 .replace(/(['"])?(\w+)(['"])?\s*:/g, '"$2":')
-                .replace(/,\s*}/, '}');
-            var config = JSON.parse(cleaned);
+                .replace(/,\s*}/g, '}');
+            var config = JSON.parse(jsonStr);
             if (!config.databaseURL) {
                 alert('Missing databaseURL in config. Make sure you created a Realtime Database.');
                 return;
