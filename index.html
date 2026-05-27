@@ -1051,34 +1051,6 @@
     </div>
 </div>
 
-<!-- FIREBASE SETUP BANNER (hidden once configured) -->
-<div class="firebase-banner" id="firebaseBanner" style="display: none;">
-    <h3>⚡ Enable Team Sync</h3>
-    <p>This calendar is currently saving locally in your browser only. To share changes with your team in real-time, connect a Firebase database. <strong>Takes ~3 minutes:</strong></p>
-    <p>
-        1. Go to <a href="https://console.firebase.google.com/" target="_blank" style="color: var(--amber);">console.firebase.google.com</a><br>
-        2. Click <strong>Create a project</strong> → name it <code>cftp-calendar</code><br>
-        3. Skip Google Analytics → click <strong>Create project</strong><br>
-        4. In the left sidebar, click <strong>Build → Realtime Database</strong><br>
-        5. Click <strong>Create Database</strong> → choose any location → select <strong>Start in test mode</strong><br>
-        6. Go to <strong>Project Settings</strong> (gear icon) → scroll to <strong>Your apps</strong> → click the <code>&lt;/&gt;</code> (Web) icon<br>
-        7. Name it <code>cftp-calendar</code> → click <strong>Register app</strong><br>
-        8. Copy the <code>firebaseConfig</code> object and paste it below:
-    </p>
-    <textarea class="firebase-config-input" id="firebaseConfigInput" placeholder='Paste the firebaseConfig object here, e.g.:
-{
-  apiKey: "AIzaSy...",
-  authDomain: "cftp-calendar.firebaseapp.com",
-  databaseURL: "https://cftp-calendar-default-rtdb.firebaseio.com",
-  projectId: "cftp-calendar",
-  storageBucket: "cftp-calendar.appspot.com",
-  messagingSenderId: "123456",
-  appId: "1:123:web:abc123"
-}'></textarea>
-    <button class="btn-setup" id="firebaseSaveConfigBtn">Connect Firebase</button>
-    <button style="background: none; border: none; color: var(--text-light); font-size: 0.78rem; margin-left: 12px; cursor: pointer; font-family: inherit;" id="firebaseDismissBtn">Dismiss</button>
-</div>
-
 <!-- FILTER BAR -->
 <div class="filter-bar">
     <div class="filter-label">
@@ -2221,67 +2193,25 @@ function resetToDefaults() {
 // Initialize: load from localStorage cache immediately, then Firebase will override via listener
 var POSTS = loadFromLocalStorage() || JSON.parse(JSON.stringify(DEFAULT_POSTS));
 
-// Try to connect Firebase on load
-FIREBASE_CONFIG = loadFirebaseConfig();
-if (FIREBASE_CONFIG && FIREBASE_CONFIG.databaseURL) {
-    initFirebase(FIREBASE_CONFIG);
-}
+// Hardcoded Firebase config — cftp-calendar project
+initFirebase({
+    apiKey: "AIzaSyCpOlkGFHfpki2wPmPnXX4ceFekSJrDW7M",
+    authDomain: "cftp-calendar.firebaseapp.com",
+    databaseURL: "https://cftp-calendar-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "cftp-calendar",
+    storageBucket: "cftp-calendar.firebasestorage.app",
+    messagingSenderId: "262289302193",
+    appId: "1:262289302193:web:778c90cc5cde4ea1377890"
+});
 
-// Show setup banner if Firebase not configured
-function checkFirebaseBanner() {
-    var banner = document.getElementById('firebaseBanner');
-    if (banner) banner.style.display = firebaseReady ? 'none' : 'block';
-}
-document.addEventListener('DOMContentLoaded', checkFirebaseBanner);
-
-// Firebase config save handler
-document.addEventListener('DOMContentLoaded', function() {
-    var saveBtn = document.getElementById('firebaseSaveConfigBtn');
-    var dismissBtn = document.getElementById('firebaseDismissBtn');
-
-    if (saveBtn) saveBtn.addEventListener('click', function() {
-        var raw = document.getElementById('firebaseConfigInput').value.trim();
-        try {
-            // Parse the config — extract the { ... } object from any surrounding code
-            // Remove comments, import/export lines, and other JS boilerplate
-            var stripped = raw
-                .replace(/\/\/.*$/gm, '')           // remove single-line comments
-                .replace(/\/\*[\s\S]*?\*\//g, '')   // remove multi-line comments
-                .replace(/^import\s+.*$/gm, '')     // remove import lines
-                .replace(/^export\s+.*$/gm, '')     // remove export lines
-                .replace(/const\s+\w+\s*=\s*initializeApp\(.*\);?/g, '')  // remove initializeApp
-                .replace(/const\s+firebaseConfig\s*=\s*/, '')  // remove variable declaration
-                .replace(/const\s+app\s*=.*$/gm, '')
-                .trim().replace(/;$/, '');
-            // Find the JSON object
-            var objMatch = stripped.match(/\{[\s\S]*\}/);
-            if (!objMatch) throw new Error('No config object found. Paste the code from Firebase.');
-            var jsonStr = objMatch[0]
-                .replace(/(['"])?(\w+)(['"])?\s*:/g, '"$2":')
-                .replace(/,\s*}/g, '}');
-            var config = JSON.parse(jsonStr);
-            if (!config.databaseURL) {
-                alert('Missing databaseURL in config. Make sure you created a Realtime Database.');
-                return;
-            }
-            saveFirebaseConfig(config);
-            if (initFirebase(config)) {
-                // Push current posts to Firebase as initial data
-                firebaseDb.ref('posts').set(POSTS);
-                document.getElementById('firebaseBanner').style.display = 'none';
-                alert('Firebase connected! Your calendar is now shared with your team.');
-            } else {
-                alert('Failed to connect. Double-check your config values.');
-            }
-        } catch (e) {
-            alert('Could not parse config. Paste the full firebaseConfig object from Firebase console.\n\nError: ' + e.message);
+// Push initial data to Firebase if database is empty
+if (firebaseReady && firebaseDb) {
+    firebaseDb.ref('posts').once('value', function(snapshot) {
+        if (!snapshot.val()) {
+            firebaseDb.ref('posts').set(POSTS);
         }
     });
-
-    if (dismissBtn) dismissBtn.addEventListener('click', function() {
-        document.getElementById('firebaseBanner').style.display = 'none';
-    });
-});
+}
 
 const PLATFORM_LABELS = {
     instagram: "Instagram", x: "Twitter/X", bluesky: "Bluesky", linkedin: "LinkedIn", youtube: "YouTube", tiktok: "TikTok", facebook: "Facebook", threads: "Threads"
