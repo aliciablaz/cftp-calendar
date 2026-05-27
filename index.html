@@ -2374,7 +2374,7 @@ function getFilteredPosts() {
 
 function updateStats() {
     const filtered = getFilteredPosts();
-    const posts = filtered.filter(p => p.platforms && p.platforms.length > 0);
+    const posts = filtered.filter(p => p.platforms && p.platforms.length > 0 && !/amplif|cross-post/i.test(p.type || ''));
     document.getElementById('statTotal').textContent = posts.length;
     document.getElementById('statScheduled').textContent = posts.filter(p => p.status === 'scheduled').length;
     document.getElementById('statPublished').textContent = posts.filter(p => p.status === 'published').length;
