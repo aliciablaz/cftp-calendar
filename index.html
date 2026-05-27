@@ -328,6 +328,25 @@
         .post-chip.facebook .chip-dot { background: var(--facebook); }
         .post-chip.threads { background: rgba(168,85,247,.15); color: #c084fc; }
         .post-chip.threads .chip-dot { background: var(--threads); }
+        .post-chip.blocker { background: rgba(239,68,68,.18); color: #fca5a5; border-left: 3px solid #ef4444; }
+        .post-chip.blocker .chip-dot { background: #ef4444; }
+        .list-item.blocker { background: rgba(239,68,68,.08); border-left: 3px solid #ef4444; }
+        .list-item.blocker .list-title { color: #fca5a5; }
+        .modal-blocker-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(239,68,68,.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239,68,68,.3);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .modal-blocker-badge svg { width: 13px; height: 13px; }
 
         .more-count {
             font-size: 11px;
@@ -2387,9 +2406,12 @@ function renderCalendar() {
 
         const maxShow = 3;
         dayPosts.slice(0, maxShow).forEach(function(post) {
-            var chipPlatform = post.platforms && post.platforms.length ? post.platforms[0] : 'instagram';
+            var isBlocker = !post.platforms || post.platforms.length === 0;
+            var chipPlatform = isBlocker ? 'blocker' : post.platforms[0];
             html += '<div class="post-chip ' + chipPlatform + '" data-post-idx="' + POSTS.indexOf(post) + '">';
-            if (post.platforms && post.platforms.length > 1) {
+            if (isBlocker) {
+                html += '<span class="chip-dot" style="background:#ef4444"></span>';
+            } else if (post.platforms.length > 1) {
                 post.platforms.forEach(function(pl) {
                     html += '<span class="chip-dot" style="background:var(--' + pl + ')"></span>';
                 });
@@ -2452,11 +2474,18 @@ function renderList() {
         var platformNames = platforms.map(function(p) { return PLATFORM_LABELS[p]; }).join(', ');
         const idx = POSTS.indexOf(post);
 
-        html += '<div class="list-item" data-post-idx="' + idx + '">';
+        var isBlocker = !platforms.length;
+        html += '<div class="list-item' + (isBlocker ? ' blocker' : '') + '" data-post-idx="' + idx + '">';
         html += '<div class="list-date">' + dateLabel + '</div>';
         html += '<div class="list-platform">';
-        platforms.forEach(function(pl) { html += '<span class="list-dot" style="background:var(--' + pl + ')"></span>'; });
-        html += platformNames + '</div>';
+        if (isBlocker) {
+            html += '<span class="list-dot" style="background:#ef4444"></span>';
+            html += '<span style="color:#fca5a5;font-weight:600;font-size:11px">BLOCKER / INFO</span>';
+        } else {
+            platforms.forEach(function(pl) { html += '<span class="list-dot" style="background:var(--' + pl + ')"></span>'; });
+            html += platformNames;
+        }
+        html += '</div>';
         html += '<div class="list-title">' + post.title + '</div>';
         html += '<div class="list-type">' + post.type + '</div>';
         html += '<div class="list-status ' + post.status + '">' + post.status.charAt(0).toUpperCase() + post.status.slice(1) + '</div>';
@@ -2488,10 +2517,15 @@ function openModal(post) {
     const dateLabel = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
     var platforms = post.platforms || [];
+    var isBlocker = !platforms.length;
     var platformBadgesHtml = '';
-    platforms.forEach(function(pl) {
-        platformBadgesHtml += '<span class="modal-platform-badge ' + pl + '">' + PLATFORM_LABELS[pl] + '</span> ';
-    });
+    if (isBlocker) {
+        platformBadgesHtml = '<span class="modal-blocker-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Blocker / Key Info</span>';
+    } else {
+        platforms.forEach(function(pl) {
+            platformBadgesHtml += '<span class="modal-platform-badge ' + pl + '">' + PLATFORM_LABELS[pl] + '</span> ';
+        });
+    }
     document.getElementById('modalPlatform').innerHTML = platformBadgesHtml;
     document.getElementById('modalPlatform').className = '';
     document.getElementById('modalTitle').textContent = post.title;
@@ -2502,7 +2536,8 @@ function openModal(post) {
     body += '<div class="modal-status-badge ' + post.status + '">' + post.status.charAt(0).toUpperCase() + post.status.slice(1) + '</div>';
     body += '</div>';
 
-    // Asset carousel
+    // Asset section — skip entirely for blocker/info posts
+    if (!isBlocker) {
     body += '<div class="modal-section"><div class="modal-section-title">Assets</div>';
     var assets = post.assets || [];
     if (assets.length > 0) {
@@ -2537,8 +2572,9 @@ function openModal(post) {
         body += 'Download assets</a>';
     }
     body += '</div></div>';
+    } // end if (!isBlocker)
 
-    body += '<div class="modal-section"><div class="modal-section-title">Caption</div>';
+    body += '<div class="modal-section"><div class="modal-section-title">' + (isBlocker ? 'Details' : 'Caption') + '</div>';
     body += '<div class="modal-copy">' + post.copy + '</div></div>';
 
     if (post.hashtags && post.hashtags.length) {
