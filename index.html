@@ -2488,7 +2488,7 @@ function renderList() {
         html += '</div>';
         html += '<div class="list-title">' + post.title + '</div>';
         html += '<div class="list-type">' + post.type + '</div>';
-        html += '<div class="list-status ' + post.status + '">' + post.status.charAt(0).toUpperCase() + post.status.slice(1) + '</div>';
+        html += '<div class="list-status ' + (isBlocker ? '' : post.status) + '">' + (isBlocker ? '' : post.status.charAt(0).toUpperCase() + post.status.slice(1)) + '</div>';
         html += '</div>';
     });
 
@@ -2533,7 +2533,9 @@ function openModal(post) {
     let body = '<div class="modal-meta">';
     body += '<div class="modal-meta-item">' + dateLabel + '</div>';
     body += '<div class="modal-meta-item">' + post.type + '</div>';
-    body += '<div class="modal-status-badge ' + post.status + '">' + post.status.charAt(0).toUpperCase() + post.status.slice(1) + '</div>';
+    if (!isBlocker) {
+        body += '<div class="modal-status-badge ' + post.status + '">' + post.status.charAt(0).toUpperCase() + post.status.slice(1) + '</div>';
+    }
     body += '</div>';
 
     // Asset section — skip entirely for blocker/info posts
