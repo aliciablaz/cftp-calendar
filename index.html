@@ -2354,7 +2354,14 @@ const MONTHS = [
     { year: 2026, month: 7, label: "August 2026" }
 ];
 
-let currentMonthIdx = 1;
+let currentMonthIdx = (function() {
+    var now = new Date();
+    var y = now.getFullYear(), m = now.getMonth();
+    for (var i = 0; i < MONTHS.length; i++) {
+        if (MONTHS[i].year === y && MONTHS[i].month === m) return i;
+    }
+    return 0;
+})();
 let activeFilter = "all";
 let currentView = "calendar";
 
