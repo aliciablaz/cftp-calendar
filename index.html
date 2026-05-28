@@ -332,6 +332,10 @@
         .post-chip.blocker .chip-dot { background: #ef4444; }
         .list-item.blocker { background: rgba(239,68,68,.08); border-left: 3px solid #ef4444; }
         .list-item.blocker .list-title { color: #fca5a5; }
+        .post-chip.afk { background: rgba(156,163,175,.18); color: #d1d5db; border-left: 3px solid #9ca3af; }
+        .post-chip.afk .chip-dot { background: #9ca3af; }
+        .list-item.afk { background: rgba(156,163,175,.08); border-left: 3px solid #9ca3af; }
+        .list-item.afk .list-title { color: #d1d5db; }
         .modal-blocker-badge {
             display: inline-flex;
             align-items: center;
@@ -347,6 +351,21 @@
             letter-spacing: 0.5px;
         }
         .modal-blocker-badge svg { width: 13px; height: 13px; }
+        .modal-afk-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(156,163,175,.15);
+            color: #d1d5db;
+            border: 1px solid rgba(156,163,175,.3);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .modal-afk-badge svg { width: 13px; height: 13px; }
 
         .more-count {
             font-size: 11px;
@@ -2470,9 +2489,12 @@ function renderCalendar() {
         const maxShow = 3;
         dayPosts.slice(0, maxShow).forEach(function(post) {
             var isBlocker = !post.platforms || post.platforms.length === 0;
-            var chipPlatform = isBlocker ? 'blocker' : post.platforms[0];
+            var isAfk = isBlocker && (post.type || '').toLowerCase() === 'afk';
+            var chipPlatform = isAfk ? 'afk' : (isBlocker ? 'blocker' : post.platforms[0]);
             html += '<div class="post-chip ' + chipPlatform + '" data-post-idx="' + POSTS.indexOf(post) + '">';
-            if (isBlocker) {
+            if (isAfk) {
+                html += '<span class="chip-dot" style="background:#9ca3af"></span>';
+            } else if (isBlocker) {
                 html += '<span class="chip-dot" style="background:#ef4444"></span>';
             } else if (post.platforms.length > 1) {
                 post.platforms.forEach(function(pl) {
@@ -2538,10 +2560,14 @@ function renderList() {
         const idx = POSTS.indexOf(post);
 
         var isBlocker = !platforms.length;
-        html += '<div class="list-item' + (isBlocker ? ' blocker' : '') + '" data-post-idx="' + idx + '">';
+        var isAfk = isBlocker && (post.type || '').toLowerCase() === 'afk';
+        html += '<div class="list-item' + (isAfk ? ' afk' : (isBlocker ? ' blocker' : '')) + '" data-post-idx="' + idx + '">';
         html += '<div class="list-date">' + dateLabel + '</div>';
         html += '<div class="list-platform">';
-        if (isBlocker) {
+        if (isAfk) {
+            html += '<span class="list-dot" style="background:#9ca3af"></span>';
+            html += '<span style="color:#d1d5db;font-weight:600;font-size:11px">AFK / LOGISTICS</span>';
+        } else if (isBlocker) {
             html += '<span class="list-dot" style="background:#ef4444"></span>';
             html += '<span style="color:#fca5a5;font-weight:600;font-size:11px">BLOCKER / INFO</span>';
         } else {
@@ -2581,8 +2607,11 @@ function openModal(post) {
 
     var platforms = post.platforms || [];
     var isBlocker = !platforms.length;
+    var isAfk = isBlocker && (post.type || '').toLowerCase() === 'afk';
     var platformBadgesHtml = '';
-    if (isBlocker) {
+    if (isAfk) {
+        platformBadgesHtml = '<span class="modal-afk-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>AFK / Logistics</span>';
+    } else if (isBlocker) {
         platformBadgesHtml = '<span class="modal-blocker-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Blocker / Key Info</span>';
     } else {
         platforms.forEach(function(pl) {
