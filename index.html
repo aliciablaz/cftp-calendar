@@ -384,8 +384,12 @@
         .list-item.blocker .list-title { color: #fca5a5; }
         .post-chip.afk { background: rgba(156,163,175,.18); color: #d1d5db; border-left: 3px solid #9ca3af; }
         .post-chip.afk .chip-dot { background: #9ca3af; }
+        .post-chip.fyi { background: rgba(37,182,255,.08); color: #7dd3fc; border-left: 3px solid rgba(37,182,255,.4); font-style: italic; }
+        .post-chip.fyi .chip-dot { background: #25B6FF; }
         .list-item.afk { background: rgba(156,163,175,.08); border-left: 3px solid #9ca3af; }
         .list-item.afk .list-title { color: #d1d5db; }
+        .list-item.fyi { background: rgba(37,182,255,.05); border-left: 3px solid rgba(37,182,255,.4); }
+        .list-item.fyi .list-title { color: #7dd3fc; font-style: italic; }
         .modal-blocker-badge {
             display: inline-flex;
             align-items: center;
@@ -416,6 +420,21 @@
             letter-spacing: 0.5px;
         }
         .modal-afk-badge svg { width: 13px; height: 13px; }
+        .modal-fyi-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(37,182,255,.1);
+            color: #7dd3fc;
+            border: 1px solid rgba(37,182,255,.25);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .modal-fyi-badge svg { width: 13px; height: 13px; }
 
         .more-count {
             font-size: 11px;
@@ -2543,6 +2562,114 @@ const DEFAULT_POSTS = [
         assets: [],
         assetStatus: "todo",
         driveLink: ""
+    },
+    // ============================================================
+    // VIDEO / FYI — Handled by video team, not design work
+    // These do NOT count toward the 65-post total
+    // ============================================================
+    {
+        date: "2026-06-04",
+        platforms: ["instagram", "x", "bluesky"],
+        type: "FYI",
+        status: "draft",
+        title: "Film clip #1 — weekly clip (pre-release)",
+        copy: "",
+        hashtags: [],
+        notes: "1 clip per week from the film until digital release July 9. Video team has cut selects at f.io/X9aFoyGX. Place wherever fits without doubling. Handled by video team or Abby — no design work needed.",
+        assets: [],
+        assetStatus: "n/a",
+        driveLink: ""
+    },
+    {
+        date: "2026-06-11",
+        platforms: ["instagram", "x", "bluesky"],
+        type: "FYI",
+        status: "draft",
+        title: "Film clip #2 — weekly clip (pre-release)",
+        copy: "",
+        hashtags: [],
+        notes: "Weekly film clip. Video team handles. No design work needed.",
+        assets: [],
+        assetStatus: "n/a",
+        driveLink: ""
+    },
+    {
+        date: "2026-06-18",
+        platforms: ["instagram", "x", "bluesky"],
+        type: "FYI",
+        status: "draft",
+        title: "Film clip #3 — weekly clip (pre-release)",
+        copy: "",
+        hashtags: [],
+        notes: "Weekly film clip. Video team handles. No design work needed.",
+        assets: [],
+        assetStatus: "n/a",
+        driveLink: ""
+    },
+    {
+        date: "2026-06-25",
+        platforms: ["instagram", "x", "bluesky"],
+        type: "FYI",
+        status: "draft",
+        title: "Film clip #4 — weekly clip (pre-release)",
+        copy: "",
+        hashtags: [],
+        notes: "Weekly film clip. Video team handles. No design work needed.",
+        assets: [],
+        assetStatus: "n/a",
+        driveLink: ""
+    },
+    {
+        date: "2026-07-02",
+        platforms: ["instagram", "x", "bluesky"],
+        type: "FYI",
+        status: "draft",
+        title: "Film clip #5 — weekly clip (pre-release)",
+        copy: "",
+        hashtags: [],
+        notes: "Weekly film clip. Video team handles. No design work needed.",
+        assets: [],
+        assetStatus: "n/a",
+        driveLink: ""
+    },
+    {
+        date: "2026-07-13",
+        platforms: ["instagram", "x", "bluesky", "tiktok"],
+        type: "FYI",
+        status: "draft",
+        title: "Daily film clips begin — week of Jul 13",
+        copy: "",
+        hashtags: [],
+        notes: "Post-release: cross-social clip from the film each day this week. Daily cadence continues through end of July. Video team or Abby handles all clips — no design work needed.",
+        assets: [],
+        assetStatus: "n/a",
+        driveLink: ""
+    },
+    {
+        date: "2026-07-20",
+        platforms: ["instagram", "x", "bluesky", "tiktok"],
+        type: "FYI",
+        status: "draft",
+        title: "Daily film clips continue — week of Jul 20",
+        copy: "",
+        hashtags: [],
+        notes: "Clip a day from the film continues. Video team handles. No design work needed.",
+        assets: [],
+        assetStatus: "n/a",
+        driveLink: ""
+    },
+    {
+        date: "2026-07-27",
+        platforms: ["instagram", "x", "bluesky", "tiktok"],
+        type: "FYI",
+        status: "draft",
+        title: "Daily film clips continue — week of Jul 27",
+        copy: "",
+        hashtags: [],
+        notes: "Clip a day continues. Specifically: clip the moment where cast members share their first internet memory — caption copy: 'What's yours?' Video team handles. No design work needed.",
+        assets: [],
+        assetStatus: "n/a",
+        driveLink: ""
     }
 ];
 
@@ -2698,7 +2825,7 @@ function getFilteredPosts() {
 
 function updateStats() {
     const filtered = getFilteredPosts();
-    const posts = filtered.filter(p => p.platforms && p.platforms.length > 0 && !/amplif|cross-post|repost/i.test((p.type || '') + ' ' + (p.title || '')));
+    const posts = filtered.filter(p => p.platforms && p.platforms.length > 0 && !/amplif|cross-post|repost|^fyi$/i.test((p.type || '')) && !/amplif|cross-post|repost/i.test((p.title || '')));
     document.getElementById('statTotal').textContent = posts.length;
     document.getElementById('statScheduled').textContent = posts.filter(p => p.status === 'scheduled').length;
     document.getElementById('statPublished').textContent = posts.filter(p => p.status === 'published').length;
@@ -2740,9 +2867,12 @@ function renderCalendar() {
         dayPosts.slice(0, maxShow).forEach(function(post) {
             var isBlocker = !post.platforms || post.platforms.length === 0;
             var isAfk = isBlocker && (post.type || '').toLowerCase() === 'afk';
-            var chipPlatform = isAfk ? 'afk' : (isBlocker ? 'blocker' : post.platforms[0]);
+            var isFyi = (post.type || '').toLowerCase() === 'fyi';
+            var chipPlatform = isFyi ? 'fyi' : (isAfk ? 'afk' : (isBlocker ? 'blocker' : post.platforms[0]));
             html += '<div class="post-chip ' + chipPlatform + '" data-post-idx="' + POSTS.indexOf(post) + '">';
-            if (isAfk) {
+            if (isFyi) {
+                html += '<span class="chip-dot" style="background:#25B6FF"></span>';
+            } else if (isAfk) {
                 html += '<span class="chip-dot" style="background:#9ca3af"></span>';
             } else if (isBlocker) {
                 html += '<span class="chip-dot" style="background:#ef4444"></span>';
@@ -2811,10 +2941,14 @@ function renderList() {
 
         var isBlocker = !platforms.length;
         var isAfk = isBlocker && (post.type || '').toLowerCase() === 'afk';
-        html += '<div class="list-item' + (isAfk ? ' afk' : (isBlocker ? ' blocker' : '')) + '" data-post-idx="' + idx + '">';
+        var isFyi = (post.type || '').toLowerCase() === 'fyi';
+        html += '<div class="list-item' + (isFyi ? ' fyi' : (isAfk ? ' afk' : (isBlocker ? ' blocker' : ''))) + '" data-post-idx="' + idx + '">';
         html += '<div class="list-date">' + dateLabel + '</div>';
         html += '<div class="list-platform">';
-        if (isAfk) {
+        if (isFyi) {
+            html += '<span class="list-dot" style="background:#25B6FF"></span>';
+            html += '<span style="color:#7dd3fc;font-weight:600;font-size:11px">GOOD TO KNOW</span>';
+        } else if (isAfk) {
             html += '<span class="list-dot" style="background:#9ca3af"></span>';
             html += '<span style="color:#d1d5db;font-weight:600;font-size:11px">AFK / LOGISTICS</span>';
         } else if (isBlocker) {
@@ -2858,8 +2992,11 @@ function openModal(post) {
     var platforms = post.platforms || [];
     var isBlocker = !platforms.length;
     var isAfk = isBlocker && (post.type || '').toLowerCase() === 'afk';
+    var isFyi = (post.type || '').toLowerCase() === 'fyi';
     var platformBadgesHtml = '';
-    if (isAfk) {
+    if (isFyi) {
+        platformBadgesHtml = '<span class="modal-fyi-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Good to Know</span>';
+    } else if (isAfk) {
         platformBadgesHtml = '<span class="modal-afk-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>AFK / Logistics</span>';
     } else if (isBlocker) {
         platformBadgesHtml = '<span class="modal-blocker-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Blocker / Key Info</span>';
