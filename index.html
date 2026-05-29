@@ -59,7 +59,7 @@
 
         /* ===== HERO HEADER ===== */
         .hero-header {
-            background: #3B53C3;
+            background: #D9D9D9;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -69,6 +69,56 @@
             max-width: 320px;
             width: 100%;
             height: auto;
+            overflow: visible;
+            cursor: pointer;
+        }
+        .scatter-block {
+            opacity: 0;
+            transform-origin: center center;
+            will-change: transform, opacity;
+        }
+        .scatter-block.entering {
+            animation: blockEnter var(--dur, 0.8s) cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s) both;
+        }
+        .scatter-block.scattering {
+            animation: blockScatter var(--dur, 0.5s) cubic-bezier(0.32, 0, 0.67, 0) var(--delay, 0s) both;
+        }
+        .scatter-block.returning {
+            animation: blockReturn var(--dur, 0.7s) cubic-bezier(0.22, 1, 0.36, 1) var(--delay, 0s) both;
+        }
+        .hole-mask {
+            opacity: 0;
+            will-change: opacity;
+        }
+        .hole-mask.visible {
+            animation: holeAppear var(--dur, 0.5s) ease-out var(--delay, 0s) both;
+        }
+        .hole-mask.hiding {
+            animation: holeDisappear var(--dur, 0.4s) ease-in var(--delay, 0s) both;
+        }
+        @keyframes holeAppear {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            100% { opacity: 1; }
+        }
+        @keyframes holeDisappear {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        @keyframes blockEnter {
+            0% { opacity: 1; transform: translate(var(--tx), var(--ty)); }
+            80% { opacity: 1; }
+            100% { opacity: 0; transform: translate(0, 0); }
+        }
+        @keyframes blockScatter {
+            0% { opacity: 0; transform: translate(0, 0); }
+            15% { opacity: 1; }
+            100% { opacity: 1; transform: translate(var(--tx), var(--ty)); }
+        }
+        @keyframes blockReturn {
+            0% { opacity: 1; transform: translate(var(--tx), var(--ty)); }
+            80% { opacity: 1; }
+            100% { opacity: 0; transform: translate(0, 0); }
         }
         .page-content {
             background: var(--page-bg);
@@ -112,8 +162,8 @@
             align-items: center;
             gap: 8px;
             padding: 10px 20px;
-            background: #3B53C3;
-            color: #ffffff;
+            background: #25B6FF;
+            color: #000000;
             border: none;
             border-radius: var(--radius-sm);
             font-size: 14px;
@@ -121,7 +171,7 @@
             cursor: pointer;
             transition: all .15s;
         }
-        .create-btn:hover { background: #4a63d4; }
+        .create-btn:hover { background: #1da3e8; }
         .create-btn svg { width: 16px; height: 16px; }
 
         /* ===== STAT CARDS ===== */
@@ -952,7 +1002,7 @@
             margin-top: 16px;
         }
         .learn-more-inner a {
-            color: #72B3FF;
+            color: #25B6FF;
             text-decoration: none;
             font-weight: 500;
         }
@@ -1069,7 +1119,38 @@
 
 <!-- HERO HEADER -->
 <div class="hero-header">
-    <img src="logo.png" alt="Code For The People" class="hero-logo">
+    <svg class="hero-logo" id="heroLogo" viewBox="0 0 1495 1217" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="July 9 — Code For The People">
+        <!-- PEOPLE -->
+        <path d="M10.5734 1216.06V981.349L223.629 981.031L259.934 1010.65V1125.93L223.629 1155.87H126.177V1216.06H10.5734ZM126.177 1111.92H144.33V1024.66H126.177V1111.92Z" fill="black"/>
+        <path d="M271.046 1216.06V981.349H499.069V1056.51H386.649V1074.98H484.419V1122.43H386.649V1140.58H499.069V1216.06H271.046Z" fill="black"/>
+        <path d="M550.096 1216.06L513.79 1186.12V1010.65L550.096 981.031H726.846L763.151 1010.65V1186.12L726.846 1216.06H550.096ZM629.394 1172.11H647.547V1024.66H629.394V1172.11Z" fill="black"/>
+        <path d="M777.684 1216.06V981.349L990.739 981.031L1027.04 1010.65V1125.93L990.739 1155.87H893.287V1216.06H777.684ZM893.287 1111.92H911.44V1024.66H893.287V1111.92Z" fill="black"/>
+        <path d="M1038.16 1216.06V981.349H1153.76V1140.58H1241.66V1216.06H1038.16Z" fill="black"/>
+        <path d="M1256.33 1216.06V981.349H1484.35V1056.51H1371.94V1074.98H1469.7V1122.43H1371.94V1140.58H1484.35V1216.06H1256.33Z" fill="black"/>
+        <!-- JULY 9 -->
+        <path d="M146.373 234L110.255 204.218V114.872H225.264V190.277H243.323V0.496442H358.332V204.218L322.214 234H146.373Z" fill="#25B6FF"/>
+        <path d="M415.245 234L379.127 204.218V0.496442H494.136V190.277H512.195V0.496442H627.205V204.218L591.086 234H415.245Z" fill="#25B6FF"/>
+        <path d="M647.999 234V0.496442H763.008V158.911H850.453V234H647.999Z" fill="#25B6FF"/>
+        <path d="M881.832 234V169.05L815.614 112.021V0.496442H930.624V117.723H948.049V0.496442H1063.06V112.021L996.841 169.05V234H881.832Z" fill="#25B6FF"/>
+        <path d="M1183.58 234L1147.46 204.218V159.862H1255.5V190.277H1273.56V144.02H1180.09L1143.97 114.555V29.9616L1180.09 0.496442H1348.96L1385.08 29.9616V204.218L1348.96 234H1183.58ZM1255.5 98.08H1273.56V43.9021H1255.5V98.08Z" fill="#25B6FF"/>
+        <!-- CODE -->
+        <path d="M276.569 479.305L240.451 449.523V275.266L276.569 245.801H452.41L488.528 275.266V351.306H373.519V289.207H355.46V435.582H373.519V372.216H488.528V449.523L452.41 479.305H276.569Z" fill="black"/>
+        <path d="M539.105 479.305L502.986 449.523V274.95L539.105 245.484H714.945L751.064 274.95V449.523L714.945 479.305H539.105ZM617.995 435.582H636.055V288.89H617.995V435.582Z" fill="black"/>
+        <path d="M765.522 479.305V245.484H960.055L1013.6 292.375V432.097L960.055 479.305H765.522ZM880.531 435.582H898.59V288.89H880.531V435.582Z" fill="black"/>
+        <path d="M1028.06 479.305V245.801H1254.91V320.573H1143.07V338.949H1240.33V386.157H1143.07V404.216H1254.91V479.305H1028.06Z" fill="black"/>
+        <!-- FOR -->
+        <path d="M370.576 724.557V491.053H597.426V565.825H485.585V584.201H581.901V648.201H485.585V724.557H370.576Z" fill="black"/>
+        <path d="M648.191 724.557L612.072 694.775V520.201L648.191 490.736H824.031L860.15 520.201V694.775L824.031 724.557H648.191ZM727.081 680.834H745.141V534.142H727.081V680.834Z" fill="black"/>
+        <path d="M874.608 724.557V491.053H1086.57L1122.69 520.518V619.052L1100.82 636.795L1133.77 724.557H1013.7L996.27 648.517H989.617V724.557H874.608ZM989.617 595.29H1007.68V534.459H989.617V595.29Z" fill="black"/>
+        <!-- THE -->
+        <path d="M438.173 969.808V811.077H382.094V736.305H609.261V811.077H553.182V969.808H438.173Z" fill="black"/>
+        <path d="M616.947 969.808V736.305H731.956V807.591H750.015V736.305H865.025V969.808H750.015V882.68H731.956V969.808H616.947Z" fill="black"/>
+        <path d="M879.482 969.808V736.305H1106.33V811.077H994.492V829.453H1091.76V876.66H994.492V894.72H1106.33V969.808H879.482Z" fill="black"/>
+        <!-- Hole masks (bg-colored rects that appear on hover to fake missing chunks) -->
+        <g id="holeMasks"></g>
+        <!-- Scatter blocks container -->
+        <g id="scatterBlocks"></g>
+    </svg>
 </div>
 
 <!-- PAGE CONTENT -->
@@ -1280,6 +1361,145 @@
         </div>
     </div>
 </div>
+
+<script>
+/* ===== LOGO SCATTER ANIMATION ===== */
+(function initLogoAnimation() {
+    var svg = document.getElementById('heroLogo');
+    var container = document.getElementById('scatterBlocks');
+    var ns = 'http://www.w3.org/2000/svg';
+    var cx = 747, cy = 608; // viewBox center
+
+    // Sample points along the letter paths to place scatter blocks
+    var letterPaths = svg.querySelectorAll('path[fill]');
+    var samplePoints = [];
+    letterPaths.forEach(function(p) {
+        var len = p.getTotalLength();
+        var fill = p.getAttribute('fill');
+        // Sample evenly along the path perimeter
+        var step = Math.max(80, len / 12);
+        for (var d = 0; d < len; d += step) {
+            var pt = p.getPointAtLength(d);
+            samplePoints.push({ x: pt.x, y: pt.y, fill: fill });
+        }
+    });
+
+    // Pick ~40 well-distributed blocks from the samples
+    var blockCount = 40;
+    var stride = Math.max(1, Math.floor(samplePoints.length / blockCount));
+    var blocks = [];
+    for (var i = 0; i < samplePoints.length && blocks.length < blockCount; i += stride) {
+        blocks.push(samplePoints[i]);
+    }
+
+    // Create the rect elements + hole masks
+    var blockSize = 70;
+    var holeSize = 60;
+    var bgColor = '#D9D9D9';
+    var rects = [];
+    var holeMaskContainer = document.getElementById('holeMasks');
+    var holes = [];
+
+    blocks.forEach(function(b, i) {
+        // Scatter block (flies outward)
+        var rect = document.createElementNS(ns, 'rect');
+        rect.setAttribute('x', b.x - blockSize / 2);
+        rect.setAttribute('y', b.y - blockSize / 2);
+        rect.setAttribute('width', blockSize);
+        rect.setAttribute('height', blockSize);
+        rect.setAttribute('fill', b.fill);
+        rect.classList.add('scatter-block');
+        rect._home = { x: b.x, y: b.y };
+        container.appendChild(rect);
+        rects.push(rect);
+
+        // Hole mask (bg-colored rect that appears on letters to fake a missing chunk)
+        // Only create for ~60% of blocks to look organic
+        if (Math.random() < 0.6) {
+            var hole = document.createElementNS(ns, 'rect');
+            hole.setAttribute('x', b.x - holeSize / 2);
+            hole.setAttribute('y', b.y - holeSize / 2);
+            hole.setAttribute('width', holeSize);
+            hole.setAttribute('height', holeSize);
+            hole.setAttribute('fill', bgColor);
+            hole.classList.add('hole-mask');
+            holeMaskContainer.appendChild(hole);
+            holes.push(hole);
+            // Link this hole to its scatter block so they share timing
+            rect._hole = hole;
+        }
+    });
+
+    function assignScatterVectors(scale) {
+        rects.forEach(function(r) {
+            var hx = r._home.x, hy = r._home.y;
+            var angle = Math.atan2(hy - cy, hx - cx) + (Math.random() - 0.5) * 1.8;
+            var dist = (scale || 1) * (500 + Math.random() * 1000);
+            r.style.setProperty('--tx', (Math.cos(angle) * dist) + 'px');
+            r.style.setProperty('--ty', (Math.sin(angle) * dist) + 'px');
+        });
+    }
+
+    function triggerAnimation(className, durRange, delayRange) {
+        rects.forEach(function(r) {
+            r.className.baseVal = 'scatter-block';
+            void r.offsetHeight;
+            var dur = durRange[0] + Math.random() * (durRange[1] - durRange[0]);
+            var delay = delayRange[0] + Math.random() * (delayRange[1] - delayRange[0]);
+            r.style.setProperty('--dur', dur + 's');
+            r.style.setProperty('--delay', delay + 's');
+            r.classList.add(className);
+        });
+    }
+
+    // Entrance animation on load
+    assignScatterVectors(1.2);
+    triggerAnimation('entering', [0.8, 1.4], [0, 0.6]);
+
+    // Hover: scatter out + show holes (synced timing)
+    svg.addEventListener('mouseenter', function() {
+        assignScatterVectors(1);
+        rects.forEach(function(r) {
+            r.className.baseVal = 'scatter-block';
+            void r.offsetHeight;
+            var dur = 0.4 + Math.random() * 0.3;
+            var delay = Math.random() * 0.2;
+            r.style.setProperty('--dur', dur + 's');
+            r.style.setProperty('--delay', delay + 's');
+            r.classList.add('scattering');
+            // Sync paired hole to same timing
+            if (r._hole) {
+                r._hole.className.baseVal = 'hole-mask';
+                void r._hole.offsetHeight;
+                r._hole.style.setProperty('--dur', dur + 's');
+                r._hole.style.setProperty('--delay', delay + 's');
+                r._hole.classList.add('visible');
+            }
+        });
+    });
+
+    // Mouse leave: return + hide holes (synced timing)
+    svg.addEventListener('mouseleave', function() {
+        rects.forEach(function(r) {
+            r.className.baseVal = 'scatter-block';
+            void r.offsetHeight;
+            var dur = 0.5 + Math.random() * 0.4;
+            var delay = Math.random() * 0.25;
+            r.style.setProperty('--dur', dur + 's');
+            r.style.setProperty('--delay', delay + 's');
+            r.classList.add('returning');
+            // Sync paired hole to same timing
+            if (r._hole) {
+                r._hole.className.baseVal = 'hole-mask';
+                void r._hole.offsetHeight;
+                r._hole.style.setProperty('--dur', dur + 's');
+                r._hole.style.setProperty('--delay', delay + 's');
+                r._hole.classList.add('hiding');
+            }
+        });
+    });
+})();
+</script>
 
 <script>
 const DEFAULT_POSTS = [
